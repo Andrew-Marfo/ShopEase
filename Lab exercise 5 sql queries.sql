@@ -1,17 +1,17 @@
-USE shop_ease;
+USE shop_ease_new;
 
 -- Lab exercise 5.1
 DELIMITER //
 
 CREATE TRIGGER update_inventory
-AFTER INSERT ON Order_Items
+AFTER INSERT ON order_Items
 FOR EACH ROW
 BEGIN
     DECLARE current_stock INT;
 
     -- Get the current stock quantity of the ordered product
     SELECT stock_quantity INTO current_stock
-    FROM Inventories
+    FROM inventory
     WHERE product_id = NEW.product_id;
 
     -- Check if the stock is sufficient
@@ -20,7 +20,7 @@ BEGIN
             SET MESSAGE_TEXT = 'Insufficient stock for product';
     ELSE
         -- Decrease the inventory count by the ordered quantity
-        UPDATE Inventories
+        UPDATE inventory
         SET stock_quantity = stock_quantity - NEW.quantity
         WHERE product_id = NEW.product_id;
     END IF;
@@ -43,11 +43,11 @@ BEGIN
 
     -- Update customer status based on total order value
     IF total_order_value > 10000 THEN
-        UPDATE Customers
+        UPDATE customers
         SET customer_status = 'VIP'
         WHERE customer_id = cust_id;
     ELSE
-        UPDATE Customers
+        UPDATE customers
         SET customer_status = 'Regular'
         WHERE customer_id = cust_id;
     END IF;
